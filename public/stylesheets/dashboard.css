@@ -1,0 +1,137 @@
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #f2f2f2;
+    border: 1px solid #000000;
+  }
+  
+  .header-left h1 {
+    font-size: 24px;
+    margin-left: 10px;
+  }
+  
+  .header-right {
+    display: flex;
+    align-items: center;
+  }
+
+  #new-post {
+    margin-right: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #020ef1;
+  }
+  
+  .profile-box {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    cursor: pointer;
+  }
+  
+  .profile-name {
+    margin-right: 10px;
+    font-weight: bold;
+  }
+  
+  .add-icon {
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .search-bar {
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  .search-bar form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .search-bar input[type="text"] {
+    padding: 5px;
+    width: 200px;
+    margin-right: 10px;
+  }
+  
+  /* Sections */
+  .sections {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    border: 1px solid #000000;
+  }
+  
+  .left-section,
+  .right-section {
+    flex-basis: 20%;
+    margin-right: 20px;
+    border: 1px solid #000000;
+  }
+  
+  .left-section h2,
+  .right-section h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .middle-section {
+    flex-grow: 1;
+    border: 1px solid #000000;
+  }
+  
+  .middle-section h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .post {
+    margin-bottom: 20px;
+    border: 1px solid #000000;
+  }
+  
+  .post a {
+    text-decoration: none;
+    color: #333;
+  }
+  
+  .post h3 {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+
+#writer-profile-pic {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.writer-profile {
+  border: 1px solid #000000;
+  display: block;
+}
+  
+  /* Footer */
+  footer {
+    padding: 20px;
+    background-color: #f2f2f2;
+    border: 1px solid #000000;
+  }
+  
+  footer a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  #logo {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+  }
+  

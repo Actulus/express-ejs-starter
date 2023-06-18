@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="./stylesheets/dashboard.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-left">
+        <img src="./images/logo.png" alt="University Logo" id="logo" />
+        <h1>University Name</h1>
+      </div>
+      <div class="header-middle">
+        <div class="search-bar">
+          <form action="/dashboard" method="GET">
+            <input type="text" name="search" placeholder="Search..." />
+            <button type="submit">Search</button>
+          </form>
+        </div>
+      </div>
+      <div class="header-right">
+        <img
+          alt="Add new post"
+          src="./images/new-post.jpg"
+          id="new-post"
+          onclick="newPost()"
+        />
+        <div class="profile-box">
+          <a href="/profile">
+            <div class="profile-name">User Name</div>
+            <img src="/profile-pic.jpg" alt="Profile Picture" />
+          </a>
+        </div>
+      </div>
+    </header>
+    <div class="sections">
+      <div class="left-section">
+        <h2>Forums</h2>
+        <ul class="forum-list">
+          <% userForums.forEach(function(forum) { %>
+          <li><a href="/forum/<%= forum.id %>"><%= forum.name %></a></li>
+          <% }); %>
+        </ul>
+      </div>
+      <div class="middle-section">
+        <h2>Dashboard</h2>
+        <!-- Render latest posts -->
+        <% latestPosts.forEach(function(post) { %>
+        <div class="post">
+          <div class="post-header">
+            <div class="writer-profile">
+              <img
+                src="<%= post.writer_profile_pic %>"
+                alt="Writer Profile Picture"
+                id="writer-profile-pic"
+              />
+              <div class="writer-name"><%= post.writer_name %></div>
+              <div class="post-date"><%= post.created_at %></div>
+            </div>
+            <a href="/post/<%= post.id %>">
+              <h3><%= post.title %></h3>
+            </a>
+          </div>
+          <div class="post-content">
+            <p><%= post.content %></p>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+      <div class="right-section">
+        <h2>Chats</h2>
+        <ul class="chat-list">
+          <% userChats.forEach(function(chat) { %>
+          <li><a href="/chat/<%= chat.id %>"><%= chat.name %></a></li>
+          <% }); %>
+        </ul>
+      </div>
+    </div>
+    <footer>
+      <a href="/settings">Settings</a>
+    </footer>
+  </body>
+  <script>
+    function newPost() {
+      // Implement the functionality to redirect to the new post page here
+      window.location.href = "/new-post";
+    }
+  </script>
+</html>
