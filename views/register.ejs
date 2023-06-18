@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>User Registration</title>
+    <link rel="stylesheet" href="../stylesheets/register.css" />
+  </head>
+  <body>
+    <header>
+      <!-- Header content -->
+    </header>
+    <div class="register">
+      <h2>User Registration</h2>
+      <form action="/auth/register" method="POST">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required />
+        </div>
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required />
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+        <div class="form-group">
+          <label for="passwordVerify">Confirm Password</label>
+          <input
+            type="password"
+            id="passwordVerify"
+            name="passwordVerify"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="role">Role</label>
+          <select name="role" id="role" onchange="showAdditionalFields()">
+            <option value="">Select Role</option>
+            <% roles.forEach(function(role) { %>
+            <option value="<%= role %>"><%= role %></option>
+            <% }); %>
+          </select>
+        </div>
+
+        <div id="additionalFields" style="display: none">
+          <!-- Additional fields based on role -->
+          <div id="studentFields">
+            <div class="form-group">
+              <label for="major">Major</label>
+              <select name="major" id="major">
+                <option value="">Select Major</option>
+                <% majors.forEach(function(major) { %>
+                <option value="<%= major%>"><%= major %></option>
+                <% }); %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="year">Year</label>
+              <select name="year" id="year">
+                <option value="">Select Year</option>
+                <% years.forEach(function(year) { %>
+                <option value="<%= year%>"><%= year %></option>
+                <% }); %>
+              </select>
+            </div>
+          </div>
+
+          <div id="teacherFields">
+            <div class="form-group">
+              <label for="department">Department</label>
+              <select name="department" id="department">
+                <option value="">Select Department</option>
+                <% departments.forEach(function(department) { %>
+                <option value="<%= department %>"><%= department %></option>
+                <% }); %>
+              </select>
+            </div>
+          </div>
+
+          <div id="employeeFields">
+            <div class="form-group">
+              <label for="position">Position</label>
+              <select name="position" id="position">
+                <option value="">Select Position</option>
+                <% positions.forEach(function(position) { %>
+                <option value="<%= position %>"><%= position %></option>
+                <% }); %>
+              </select>
+            </div>
+          </div>
+
+          <div id="administratorFields">
+            <div class="form-group">
+              <label for="section">Section</label>
+              <select name="section" id="section">
+                <option value="">Select Section</option>
+                <% sections.forEach(function(section) { %>
+                <option value="<%= section %>"><%= section %></option>
+                <% }); %>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit">Register</button>
+      </form>
+    </div>
+    <p class="login-link">
+      Already have a profile? <a href="/auth/login">Login</a>
+    </p>
+    <footer>
+      <!-- Footer content -->
+    </footer>
+
+    <script>
+      async function getRoles() {
+        const conn = db.getConnection();
+        const query = "SELECT name FROM roles";
+        const [rows] = await conn.query(query);
+        console.log(rows);
+        const roles = rows.map((row) => row.name);
+        return roles;
+      }
+
+      async function getMajors(role) {
+        const conn = db.getConnection();
+        const query = "SELECT name FROM majors WHERE role = ?";
+        const [rows] = await conn.query(query, [role]);
+        const majors = rows.map((row) => row.name);
+        return majors;
+      }
+
+      async function getYears(role) {
+        const conn = db.getConnection();
+        const query = "SELECT name FROM years WHERE role = ?";
+        const [rows] = await conn.query(query, [role]);
+        const years = rows.map((row) => row.name);
+        return years;
+      }
+
+      async function getPositions(role) {
+        const conn = db.getConnection();
+        const query = "SELECT name FROM positions WHERE role = ?";
+        const [rows] = await conn.query(query, [role]);
+        const positions = rows.map((row) => row.name);
+        return positions;
+      }
+
+      async function getDepartments() {
+        const conn = db.getConnection();
+        const query = "SELECT name FROM departments";
+        const [rows] = await conn.query(query);
+        const departments = rows.map((row) => row.name);
+        return departments;
+      }
+
+      async function getSections() {
+        const conn = db.getConnection();
+        const query = "SELECT name FROM sections";
+        const [rows] = await conn.query(query);
+        const sections = rows.map((row) => row.name);
+        return sections;
+      }
+
+      function showAdditionalFields() {
+        var role = document.getElementById("role").value;
+        var additionalFields = document.getElementById("additionalFields");
+        var studentFields = document.getElementById("studentFields");
+        var teacherFields = document.getElementById("teacherFields");
+        var employeeFields = document.getElementById("employeeFields");
+        var administratorFields = document.getElementById(
+          "administratorFields"
+        );
+
+        // Hide all additional fields
+        studentFields.style.display = "none";
+        teacherFields.style.display = "none";
+        employeeFields.style.display = "none";
+        administratorFields.style.display = "none";
+
+        // Show the additional fields based on the selected role
+        if (role.toLowerCase() === "diák") {
+          studentFields.style.display = "block";
+        } else if (role.toLowerCase() === "tanár") {
+          teacherFields.style.display = "block";
+        } else if (role.toLowerCase() === "munkatárs") {
+          employeeFields.style.display = "block";
+        } else if (role.toLowerCase() === "adminisztrátor") {
+          administratorFields.style.display = "block";
+        }
+
+        additionalFields.style.display = role ? "block" : "none";
+      }
+
+      // Populate dropdowns with data
+      async function populateDropdowns() {
+        const roles = await getRoles();
+        const majors = await getMajors();
+        const years = await getYears();
+        const positions = await getPositions();
+        const departments = await getDepartments();
+        const sections = await getSections();
+
+        var roleDropdown = document.getElementById("role");
+        var majorDropdown = document.getElementById("major");
+        var yearDropdown = document.getElementById("year");
+        var positionDropdown = document.getElementById("position");
+        var departmentDropdown = document.getElementById("department");
+        var sectionDropdown = document.getElementById("section");
+
+        // Populate role dropdown
+        roles.forEach(function (role) {
+          var option = document.createElement("option");
+          option.value = role;
+          option.text = role;
+          roleDropdown.appendChild(option);
+        });
+
+        // Populate major dropdown
+        majors.forEach(function (major) {
+          var option = document.createElement("option");
+          option.value = major;
+          option.text = major;
+          majorDropdown.appendChild(option);
+        });
+
+        // Populate year dropdown
+        years.forEach(function (year) {
+          var option = document.createElement("option");
+          option.value = year;
+          option.text = year;
+          yearDropdown.appendChild(option);
+        });
+
+        // Populate position dropdown
+        positions.forEach(function (position) {
+          var option = document.createElement("option");
+          option.value = position;
+          option.text = position;
+          positionDropdown.appendChild(option);
+        });
+
+        // Populate department dropdown
+        departments.forEach(function (department) {
+          var option = document.createElement("option");
+          option.value = department;
+          option.text = department;
+          departmentDropdown.appendChild(option);
+        });
+
+        // Populate section dropdown
+        sections.forEach(function (section) {
+          var option = document.createElement("option");
+          option.value = section;
+          option.text = section;
+          sectionDropdown.appendChild(option);
+        });
+      }
+
+      // Call the function to populate dropdowns on page load
+      populateDropdowns();
+    </script>
+  </body>
+</html>
