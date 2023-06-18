@@ -1,29 +1,18 @@
-import { DataTypes } from "sequelize";
-import { getClient } from "../db/config.js";
 import logger from "../utils/logging.js";
+import db from '../db/db.js';
 
-const sequelize = getClient();
-const User = sequelize.define('User', {
-    // Model attributes are defined here
-    firstName: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    lastName: {
-        type: DataTypes.STRING
-        // allowNull defaults to true
-    }
-}, { "tableName": "User" });
+async function getUserById(userID) {
+    // Get a connection
+    const conn = db.getConnection();
 
-await User.sync();
+    // Make a query
+    const [result, _columnDefinition] = await conn.query('SELECT * FROM users WHERE id = ?', [userID]);
 
-async function tableExists() {
-    const tableNames = await sequelize.getQueryInterface().showAllTables();
-    logger.debug(tableNames);
-    
-    return tableNames.includes('User');
+    logger.debug(`User with id(${userID}), %o`, result[0]);
+
+    return result;
 }
 
 export default {
-    tableExists
+    getUserById
 }
