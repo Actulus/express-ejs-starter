@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>User Profile</title>
+    <link rel="stylesheet" href="./stylesheets/profile.css" />
+  </head>
+  <body>
+    <div class="profile-container">
+      <div class="profile-details">
+        <img src="<%= user.profile_pic %>" alt="Profile Picture" />
+        <p><%= user.description %></p>
+      </div>
+      <div class="profile-info">
+        <h2><%= user.name %></h2>
+        <p><strong>Username:</strong> <%= user.username %></p>
+        <p><strong>Email:</strong> <%= user.email %></p>
+
+        <% if (user.role === 'Diák') { %>
+        <p><strong>Major:</strong> <%= user.major %></p>
+        <p><strong>Year:</strong> <%= user.year %></p>
+        <% } else if (user.role === 'Tanár') { %>
+        <p><strong>Department:</strong> <%= user.department %></p>
+        <% } else if (user.role === 'Adminisztrátor') { %>
+        <p><strong>Sections:</strong> <%= user.sections %></p>
+        <% } else if (user.role === 'Munkatárs') { %>
+        <p><strong>Position:</strong> <%= user.position %></p>
+        <% } %>
+      </div>
+    </div>
+    <form action="/auth/logout" method="POST">
+      <button type="submit">Logout</button>
+    </form>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+  }
+  
+  .description {
+    margin-top: 20px;
+    font-size: 16px;
+  }
+  
+  .profile-details {
+    margin-top: 20px;
+    font-size: 14px;
+  }
+  
+  .profile-details h3 {
+    margin: 0;
+    font-weight: bold;
+  }
+  
+  .profile-details p {
+    margin: 5px 0;
+  }
+  
+  .student-details,
+  .teacher-details,
+  .employee-details,
+  .administrator-details {
+    margin-top: 20px;
+  }
+  
+  .details-heading {
+    font-weight: bold;
+  }
+  
+  .details-content {
+    margin-top: 5px;
+  }
+  
