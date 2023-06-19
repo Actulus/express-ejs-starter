@@ -250,6 +250,40 @@ async function getUserByToken(token) {
     }
 }
 
+// Update the user description in the database
+async function updateDescription(userId, description) {
+    try {
+        const conn = db.getConnection();
+
+        const query = 'UPDATE users SET description = ? WHERE id = ?';
+        await conn.query(query, [description, userId]);
+
+        logger.debug(`User with id(${userId}) description updated`);
+
+        return true;
+    } catch (error) {
+        logger.error(`Error updating user description: ${error.message}`);
+        throw error;
+    }
+}
+
+// Delete the user description in the database
+async function deleteDescription(userId) {
+    try {
+        const conn = db.getConnection();
+
+        const query = 'UPDATE users SET description = NULL WHERE id = ?';
+        await conn.query(query, [userId]);
+
+        logger.debug(`User with id(${userId}) description deleted`);
+
+        return true;
+    } catch (error) {
+        logger.error(`Error deleting user description: ${error.message}`);
+        throw error;
+    }
+}
+
 export default {
     getUserById,
     login,
@@ -261,5 +295,7 @@ export default {
     getPositions,
     getDepartments,
     getSections,
-    getUserByToken
+    getUserByToken,
+    updateDescription,
+    deleteDescription,
 }
