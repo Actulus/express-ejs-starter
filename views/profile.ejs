@@ -2,12 +2,15 @@
 <html>
   <head>
     <title>User Profile</title>
-    <link rel="stylesheet" href="./stylesheets/profile.css" />
+    <link rel="stylesheet" href="../stylesheets/profile.css" />
   </head>
   <body>
     <div class="profile-container">
       <div class="profile-details">
-        <img src="<%= user.profile_pic %>" alt="Profile Picture" />
+        <img
+          src="<%= user.profile_pic ? user.profile_pic : '../images/default_pfp.jpg' %>"
+          alt="Profile Picture"
+        />
         <p><%= user.description %></p>
       </div>
       <div class="profile-info">
