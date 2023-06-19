@@ -1,6 +1,7 @@
 import logger from "../utils/logging.js";
 import db from '../db/db.js';
 import bcrypt from 'bcrypt';
+import jwt from "jsonwebtoken";
 
 async function getUserById(userID) {
     // Get a connection
@@ -228,6 +229,27 @@ async function getSections(role) {
     return sections;
 }
 
+async function getUserByToken(token) {
+    try {
+        const user_id = jwt.verify(token, process.env.JWT_SECRET);
+        // console.log(user_id);
+        // Make a query
+        const result = await getUserById(user_id.id);
+        // console.log(result);
+        // logger.debug(`User with id(${result[0].id}) found`);
+
+        // console.log(result[0]);
+        return result[0];
+    } catch (error) {
+        // Handle the error
+        logger.debug(`Error finding user: ${error.message}`);
+        throw error;
+    } finally {
+        // Release the connection
+        // conn.release();
+    }
+}
+
 export default {
     getUserById,
     login,
@@ -239,4 +261,5 @@ export default {
     getPositions,
     getDepartments,
     getSections,
+    getUserByToken
 }

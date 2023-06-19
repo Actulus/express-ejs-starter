@@ -1,5 +1,6 @@
 import db from '../db/db.js';
 import logger from '../utils/logging.js';
+import UserModel from '../models/UserModel.js';
 
 async function getLatestPosts(_req, _res, _next) {
     // Get a connection
@@ -234,18 +235,48 @@ async function postPage(req, res, _next) {
 }
 
 
+async function getUserById(id) {
+    // Assuming you have a database connection or an ORM configured
+    // Use your preferred method to query the database and retrieve the user data
+    // Adjust the query logic based on your specific database setup
 
+    try {
+        // Example using SQL query
+        const conn = db.getConnection();
+        const query = 'SELECT * FROM users WHERE id = ?';
+        const [userRows, _] = await conn.query(query, [id]);
+
+        if (userRows.length === 0) {
+            // User with the specified ID was not found
+            return null;
+        }
+
+        // Assuming the user object is present in the first row of the result
+        const user = userRows[0];
+        return user;
+    } catch (error) {
+        // Handle any errors that occur during the database query
+        console.error('Error retrieving user from database:', error);
+        throw error;
+    }
+}
 
 async function profilePage(req, res, _next) {
-    const { loggedIn } = req.body;
+    const isLoggedIn = !!req.cookies.token;
 
-    if (!loggedIn) {
+    if (!isLoggedIn) {
         // Handle the case where the user is not logged in
         return res.status(401).send("Unauthorized");
     }
 
-    const userId = loggedIn.id; // Assuming the user ID is available in the loggedIn object
-    const user = await getUserById(userId); // Assuming getUserById retrieves user data based on the ID
+    const userByToken = await UserModel.getUserByToken(req.cookies.token);
+    const userID = userByToken.id;
+    console.log(userID);
+
+    /* const userId = isLoggedIn.id; // Assuming the user ID is available in the loggedIn object
+    const user = await getUserById(userId); // Assuming getUserById retrieves user data based on the ID */
+
+    const user = await getUserById(userID);
 
     if (!user) {
         // Handle the case where the user is not found
