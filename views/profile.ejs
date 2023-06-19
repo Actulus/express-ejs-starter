@@ -8,34 +8,17 @@
     <div class="profile-container">
       <div class="profile-details">
         <img
-          src="<%= user.profile_pic ? user.profile_pic : '../images/default_pfp.jpg' %>"
+          src="<%= user.profile_pic ? '/../images/' + user.profile_pic : '../images/default_pfp.jpg' %>"
           alt="Profile Picture"
         />
         <h2><%= user.name %></h2>
       </div>
       <div class="user-description">
         <p><%= user.description %></p>
-        <button
-          id="button-change-description"
-          class="button-change"
-          type="button"
-          onclick="changeDescription()"
-        >
-          Change
-        </button>
-        <button
-          id="button-delete-description"
-          class="button-delete"
-          type="button"
-          onclick="deleteDescription()"
-        >
-          Delete
-        </button>
       </div>
       <div class="profile-info">
         <p><strong>Username:</strong> <%= user.username %></p>
         <p><strong>Email:</strong> <%= user.email %></p>
-
         <% if (user.role === 'Diák') { %>
         <p><strong>Major:</strong> <%= user.major %></p>
         <p><strong>Year:</strong> <%= user.year %></p>
@@ -49,9 +32,20 @@
       </div>
     </div>
     <footer>
+      <form action="/settings" method="GET">
+        <button type="submit">Settings</button>
+      </form>
       <form action="/auth/logout" method="GET">
         <button type="submit">Logout</button>
       </form>
+      <form action="/dashboard" method="GET">
+        <button type="submit">Dashboard</button>
+      </form>
+      <form action="/new-post" method="GET">
+        <button type="submit">New Post</button>
+      </form>
+      <form action="/profile/edit" method="GET">
+        <button type="submit">Edit Profile</button>
     </footer>
   </body>
 </html>
