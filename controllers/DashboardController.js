@@ -1,15 +1,87 @@
-function getLatestPosts() {
-    return [
-        {
-            writer_name: 'John Doe',
-            writer_profile_pic: 'https://www.w3schools.com/howto/img_avatar.png',
-            created_at: '2020-01-01',
-            title: 'First post',
-            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam aliquet, ante non ultricies convallis, nisl nisi aliquam velit, nec cursus nisi felis nec nibh. Donec et nisl non nisl facilisis lacinia. Sed vitae erat quis quam aliquam ullamcorper. Nulla facilisi. Donec sit amet semper nisl. Sed euismod, augue eget lacinia vestibulum, est tortor aliquam leo, sed aliquam magna elit vitae elit. Donec id ante non nisl aliquet ultricies. Sed euismod, augue eget lacinia vestibulum, est tortor aliquam leo, sed aliquam magna elit vitae elit. Donec id ante non nisl aliquet ultricies.',
-        },
+import db from '../db/db.js';
+import logger from '../utils/logging.js';
 
-    ];
+async function getLatestPosts(_req, _res, _next) {
+    // Get a connection
+    const conn = db.getConnection();
+    const query = 'SELECT * FROM posts ORDER BY created_at DESC LIMIT 10';
+    const [postResult, _columnDefinition] = await conn.query(query);
+    // console.log(result);
+
+    const usersQuery = 'SELECT * FROM users';
+    const [usersResult, _usersColumnDefinition] = await conn.query(usersQuery);
+
+    // get the writers based on the usersQuery and the postsQuery
+    const writerResult = usersResult.filter((user) => {
+        return postResult.some((post) => post.user_id === user.id);
+    });
+
+    // console.log(writerResult);
+
+    const posts = postResult.map((post) => {
+        const writer = writerResult.find((user) => user.id === post.user_id);
+        let writer_profile_pic = writer ? writer.profile_pic : null;
+        const writer_name = writer ? writer.name : null;
+        const createdDate = new Date(post.created_at);
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+        const formattedDate = createdDate.toLocaleString('en-US', options);
+
+        return {
+            id: post.id,
+            title: post.title,
+            content: post.content,
+            created_at: formattedDate,
+            writer_profile_pic: writer_profile_pic,
+            writer_name: writer_name,
+        };
+    });
+
+    // console.log(`Latest posts: %o`, posts);
+
+    return posts;
 }
+
+async function getPostsContaining(keyword) {
+    // Get a connection
+    const conn = db.getConnection();
+    const query = `SELECT * FROM posts WHERE title LIKE '%${keyword}%' OR content LIKE '%${keyword}%'`;
+    const [postResult, _columnDefinition] = await conn.query(query);
+
+    const usersQuery = 'SELECT * FROM users';
+    const [usersResult, _usersColumnDefinition] = await conn.query(usersQuery);
+
+    const writerResult = usersResult.filter((user) => {
+        return postResult.some((post) => post.user_id === user.id);
+    });
+
+    const posts = postResult.map((post) => {
+        const writer = writerResult.find((user) => user.id === post.user_id);
+        const writer_profile_pic = writer ? writer.profile_pic : 'default_pfp.jpg';
+        const writer_name = writer ? writer.name : null;
+        const createdDate = new Date(post.created_at);
+        const formattedDate = createdDate.toLocaleString('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        return {
+            id: post.id,
+            title: post.title,
+            content: post.content,
+            created_at: formattedDate,
+            writer_profile_pic: writer_profile_pic,
+            writer_name: writer_name
+        };
+    });
+
+    console.log(`Posts containing "${keyword}":`, posts);
+
+    return posts;
+}
+
 
 function getUserForums() {
     return [
@@ -41,16 +113,66 @@ function newPost(req, res, _next) {
     res.redirect('/new-post');
 }
 
-
-function dashboardPage(req, res, _next) {
+async function dashboardPage(req, res, _next) {
     const { loggedIn } = req.body;
-    const latestPosts = getLatestPosts();
+    const { search } = req.query;
     const userForums = getUserForums();
     const userChats = getUserChats();
+
+    // get logged in user's profile picture, if it's not set, use default, otherwise get it from the database
+    let profilePicture = loggedIn ? 'default_pfp.jpg' : null;
+
+    let latestPosts = await getLatestPosts();
+    let searchResults = [];
+    let noPosts = null;
+
+    if (search && search.trim() !== '') {
+        searchResults = await getPostsContaining(search);
+        noPosts = searchResults.length === 0 ? `No posts containing "${search}"` : null;
+    } else {
+        searchResults = null;
+        noPosts = null;
+        latestPosts = await getLatestPosts();
+    }
+
     res.locals = { title: 'Dashboard', loggedIn: loggedIn };
-    res.render('dashboard', { latestPosts, newPost, loggedIn, userForums, userChats });
+    res.render('dashboard', { latestPosts, searchResults, noPosts, newPost, loggedIn, userForums, userChats, profilePicture });
 }
 
+function forumPage(req, res, _next) {
+    console.log('forumPage');
+    console.log(req.body);
+    const threads = [
+        {
+            id: 0,
+            title: 'First thread',
+            createdAt: '2020-01-01',
+            replyCount: 0,
+        }
+    ];
+    res.locals = { title: 'Forum', threads };
+    res.render('forum');
+}
+
+function chatPage(req, res, _next) {
+    console.log('chatPage');
+    console.log(req.body);
+    const messages = [
+        {
+            sender: 'John Doe',
+            content: '',
+            timestamp: '2020-01-01',
+        },
+        {
+            sender: 'Jane Doe',
+            content: '',
+            timestamp: '2020-01-01',
+        }
+    ];
+
+    res.locals = { title: 'Chat', messages };
+    res.render('chat');
+}
 
 function newPostPage(req, res, _next) {
     res.locals = { title: 'New Post' };
@@ -59,10 +181,20 @@ function newPostPage(req, res, _next) {
 
 function postPage(req, res, _next) {
     const { id } = req.params;
-    const post = getLatestPosts()[id];
-    res.locals = { title: post.title };
+    const posts = getLatestPosts(); // Assuming getLatestPosts returns an array of posts
+    const post = posts.find((post) => post.id === id);
+
+    if (!post) {
+        // Handle the case where the post with the specified ID is not found
+        return res.status(404).send("Post not found");
+    }
+
+    res.locals.title = post.title;
     res.render('post', { post });
 }
+
+
+
 
 function profilePage(req, res, _next) {
     const user = { name: 'John Doe', username: 'Johnny', email: 'john.doe@gmail.com', profile_pic: 'https://www.w3schools.com/howto/img_avatar.png', description: '...', role: 'Diák', major: 'Programtervező informatikus', year: 'II' };
@@ -70,11 +202,57 @@ function profilePage(req, res, _next) {
     res.render('profile');
 }
 
+function newChat(req, res, _next) {
+    res.locals = { title: 'New Chat' };
+    res.render('new-chat');
+}
+
+function threadPage(req, res, _next) {
+    // Assuming you have a database or data source to fetch the thread details and replies based on the `: id` parameter
+    const threadId = req.params.id;
+
+    // Fetch thread details from the database
+    const thread = {
+        id: threadId,
+        title: "Thread Title",
+        author: "Thread Author",
+        createdAt: "Thread Date",
+        content: "Thread content goes here.",
+    };
+
+    // Fetch replies for the thread from the database
+    const replies = [
+        {
+            id: 1,
+            author: "Reply Author 1",
+            createdAt: "Reply Date 1",
+            content: "Reply content 1",
+        },
+        {
+            id: 2,
+            author: "Reply Author 2",
+            createdAt: "Reply Date 2",
+            content: "Reply content 2",
+        },
+        // Add more replies as needed
+    ];
+
+    // Render the thread.ejs view and pass the thread and replies as variables
+    res.render("thread", { thread, replies });
+}
+
+
 export default {
     dashboardPage,
     newPost,
     newPostPage,
     postPage,
     profilePage,
-    getUserForums
+    getUserForums,
+    getUserChats,
+    newChat,
+    forumPage,
+    chatPage,
+    threadPage,
+    getLatestPosts,
 }
