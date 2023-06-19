@@ -15,9 +15,15 @@ router.get('/', IndexPageController.indexPage);
 
 router.get('/dashboard', DashboardController.dashboardPage);
 
+router.get('/forum', DashboardController.forumPage);
+router.get('/thread/:id', DashboardController.threadPage);
+
+router.get('/chat', DashboardController.chatPage);
+
 router.get('/new-post', DashboardController.newPostPage);
 router.post('/new-post', DashboardController.newPost);
 
+// router.get('/post', DashboardController.postPage);
 router.get('/post/:id', DashboardController.postPage);
 
 router.get('/profile', DashboardController.profilePage);
