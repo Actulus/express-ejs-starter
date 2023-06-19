@@ -11,10 +11,28 @@
           src="<%= user.profile_pic ? user.profile_pic : '../images/default_pfp.jpg' %>"
           alt="Profile Picture"
         />
+        <h2><%= user.name %></h2>
+      </div>
+      <div class="user-description">
         <p><%= user.description %></p>
+        <button
+          id="button-change-description"
+          class="button-change"
+          type="button"
+          onclick="changeDescription()"
+        >
+          Change
+        </button>
+        <button
+          id="button-delete-description"
+          class="button-delete"
+          type="button"
+          onclick="deleteDescription()"
+        >
+          Delete
+        </button>
       </div>
       <div class="profile-info">
-        <h2><%= user.name %></h2>
         <p><strong>Username:</strong> <%= user.username %></p>
         <p><strong>Email:</strong> <%= user.email %></p>
 
@@ -30,8 +48,10 @@
         <% } %>
       </div>
     </div>
-    <form action="/auth/logout" method="GET">
-      <button type="submit">Logout</button>
-    </form>
+    <footer>
+      <form action="/auth/logout" method="GET">
+        <button type="submit">Logout</button>
+      </form>
+    </footer>
   </body>
 </html>

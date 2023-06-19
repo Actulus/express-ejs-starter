@@ -113,7 +113,7 @@ async function getPostsContaining(keyword) {
         };
     });
 
-    console.log(`Posts containing "${keyword}":`, posts);
+    // console.log(`Posts containing "${keyword}":`, posts);
 
     return posts;
 }
@@ -176,8 +176,8 @@ async function dashboardPage(req, res, _next) {
 }
 
 function forumPage(req, res, _next) {
-    console.log('forumPage');
-    console.log(req.body);
+    // console.log('forumPage');
+    // console.log(req.body);
     const threads = [
         {
             id: 0,
@@ -191,8 +191,8 @@ function forumPage(req, res, _next) {
 }
 
 function chatPage(req, res, _next) {
-    console.log('chatPage');
-    console.log(req.body);
+    // console.log('chatPage');
+    // console.log(req.body);
     const messages = [
         {
             sender: 'John Doe',
@@ -221,7 +221,7 @@ async function postPage(req, res, _next) {
     const posts = await getAllPosts(); // Assuming getLatestPosts returns an array of posts
     // console.log(`Posts: %o`, posts);
     const post = posts.find((post) => {
-        console.log(`Post ID: ${post.id}`);
+        // console.log(`Post ID: ${post.id}`);
         return post.id === parseInt(id);
     });
 
@@ -253,6 +253,55 @@ async function getUserById(id) {
 
         // Assuming the user object is present in the first row of the result
         const user = userRows[0];
+
+        // get role_name from roles table
+        const roleQuery = 'SELECT name FROM roles WHERE id = ?';
+        const [roleRows] = await conn.query(roleQuery, [user.role_id]);
+        user.role = roleRows[0].name;
+
+        if (user.role === 'Diák') {
+            const studentQuery = 'SELECT * FROM students WHERE user_id = ?';
+            const [studentRows] = await conn.query(studentQuery, [id]);
+
+            // console.log(`Student rows: %o`, studentRows);
+
+            if (studentRows.length > 0) {
+                user.major = studentRows[0].major;
+                user.year = studentRows[0].year;
+
+            }
+        } else if (user.role === 'Tanár') {
+            const teacherQuery = 'SELECT * FROM teachers WHERE user_id = ?';
+            const [teacherRows] = await conn.query(teacherQuery, [id]);
+
+            // console.log(`Teacher rows: %o`, teacherRows);
+
+            if (teacherRows.length > 0) {
+                user.department = teacherRows[0].department;
+            }
+        } else if (user.role === 'Adminisztrátor') {
+            const adminQuery = 'SELECT * FROM administrators WHERE user_id = ?';
+            const [adminRows] = await conn.query(adminQuery, [id]);
+
+            // console.log(`Admin rows: %o`, adminRows);
+
+            if (adminRows.length > 0) {
+                user.sections = adminRows[0].section;
+            }
+
+        } else if (user.role === 'Munkatárs') {
+            const parentQuery = 'SELECT * FROM employees WHERE user_id = ?';
+            const [emplyeeRows] = await conn.query(parentQuery, [id]);
+
+            // console.log(`Employee rows: %o`, emplyeeRows);
+
+            if (emplyeeRows.length > 0) {
+                user.position = emplyeeRows[0].position;
+            }
+        }
+
+        // console.log(`User: %o`, user);
+
         return user;
     } catch (error) {
         // Handle any errors that occur during the database query
@@ -271,12 +320,14 @@ async function profilePage(req, res, _next) {
 
     const userByToken = await UserModel.getUserByToken(req.cookies.token);
     const userID = userByToken.id;
-    console.log(userID);
+    // console.log(userID);
 
     /* const userId = isLoggedIn.id; // Assuming the user ID is available in the loggedIn object
     const user = await getUserById(userId); // Assuming getUserById retrieves user data based on the ID */
 
     const user = await getUserById(userID);
+
+    // console.log(`User: %o`, user);
 
     if (!user) {
         // Handle the case where the user is not found
@@ -327,6 +378,63 @@ function threadPage(req, res, _next) {
 }
 
 
+async function changeDescription(req, res, _next) {
+    const userId = req.user.id;
+    const currentDescription = req.body.newDescription;
+    const descriptionElement = document.getElementById('user-description');
+
+    if (newDescription.length > 255) {
+        return res.status(400).send('Description exceeds maximum length');
+    }
+
+    const newDescription = prompt('Enter the new description:');
+    if (newDescription === null) {
+        // User canceled the prompt
+        return;
+    }
+
+    try {
+        const response = await fetch('/profile/description', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ description: newDescription }),
+        });
+
+        if (response.ok) {
+            // Update the description in the HTML
+            descriptionElement.textContent = newDescription;
+            alert('Description updated successfully.');
+        } else {
+            const errorData = await response.json();
+            alert(`Error updating description: ${errorData.message}`);
+        }
+    } catch (error) {
+        console.error('Error updating description:', error);
+        alert('Error updating description. Please try again later.');
+    }
+}
+
+async function deleteDescription(req, res, _next) {
+    const userId = req.user.id;
+
+    try {
+        const conn = db.getConnection();
+        const deleteQuery = 'UPDATE users SET description = NULL WHERE id = ?';
+        await conn.query(deleteQuery, [userId]);
+
+        // Update the user object in memory
+        const user = await getUserById(userId);
+        req.user = user;
+
+        res.redirect('/profile');
+    } catch (error) {
+        console.error('Error deleting description:', error);
+        res.status(500).send('Error deleting description');
+    }
+}
+
 export default {
     dashboardPage,
     newPost,
@@ -340,4 +448,7 @@ export default {
     chatPage,
     threadPage,
     getLatestPosts,
+    deleteDescription,
+    changeDescription
+
 }

@@ -1,46 +1,119 @@
+/* Grid layout for profile page */
+
+body {
+  background-color: #99b38c;
+}
+
 .profile-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .profile-pic {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-  }
-  
-  .description {
-    margin-top: 20px;
-    font-size: 16px;
-  }
-  
-  .profile-details {
-    margin-top: 20px;
-    font-size: 14px;
-  }
-  
-  .profile-details h3 {
-    margin: 0;
-    font-weight: bold;
-  }
-  
-  .profile-details p {
-    margin: 5px 0;
-  }
-  
-  .student-details,
-  .teacher-details,
-  .employee-details,
-  .administrator-details {
-    margin-top: 20px;
-  }
-  
-  .details-heading {
-    font-weight: bold;
-  }
-  
-  .details-content {
-    margin-top: 5px;
-  }
-  
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-gap: 20px;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  grid-gap: 10px;
+}
+
+.profile-info {
+  display: grid;
+  grid-template-rows: repeat(5, auto);
+  grid-gap: 10px;
+}
+
+/* Styling for profile page */
+
+.profile-container {
+  padding: 20px;
+  background-color: #d6f0c9;
+  border: 1px solid #76b55a;
+  border-radius: 5px;
+}
+
+.profile-details img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-info h2 {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.profile-info p {
+  margin: 0;
+}
+
+.profile-info strong {
+  font-weight: bold;
+}
+
+form {
+  margin-top: 20px;
+}
+
+button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #4caf50;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.button-change {
+  background-color: #2196f3;
+  color: #fff;
+}
+
+.button-delete {
+  background-color: #f44336;
+  color: #fff;
+}
+
+.user-description {
+  display: flexbox;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #79e38a;
+  border: 1px solid #185114;
+  border-radius: 5px;
+}
+
+footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  margin-top: auto;
+  background-color: #5ca861;
+  padding: 10px;
+  text-align: right;
+}
+
+footer a {
+  text-decoration: none;
+  color: #fff;
+  padding: 0 20px;
+}
+
+footer form button {
+  padding: 8px 20px;
+  margin: 0 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #0a3d6b;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  width: 100px;
+}
+
+/* Additional styling can be added based on your design preferences */
