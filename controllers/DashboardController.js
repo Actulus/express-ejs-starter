@@ -150,6 +150,24 @@ function newPost(req, res, _next) {
 }
 
 async function dashboardPage(req, res, _next) {
+    const isLoggedIn = !!req.cookies.token;
+
+    if (!isLoggedIn) {
+        // Handle the case where the user is not logged in
+        return res.status(401).send("Unauthorized");
+    }
+
+    const userByToken = await UserModel.getUserByToken(req.cookies.token);
+    const userID = userByToken.id;
+    const user = await getUserById(userID);
+
+    if (!user) {
+        // Handle the case where the user is not found
+        return res.status(404).send("User not found");
+    }
+
+    // console.log(`User: %o`, user);
+
     const { loggedIn } = req.body;
     const { search } = req.query;
     const userForums = getUserForums();
@@ -172,7 +190,7 @@ async function dashboardPage(req, res, _next) {
     }
 
     res.locals = { title: 'Dashboard', loggedIn: loggedIn };
-    res.render('dashboard', { latestPosts, searchResults, noPosts, newPost, loggedIn, userForums, userChats, profilePicture });
+    res.render('dashboard', { latestPosts, searchResults, noPosts, newPost, loggedIn, userForums, userChats, profilePicture, user });
 }
 
 function forumPage(req, res, _next) {
@@ -334,8 +352,10 @@ async function profilePage(req, res, _next) {
         return res.status(404).send("User not found");
     }
 
+    const editMode = req.query.edit === 'true';
+
     res.locals.title = 'Profile';
-    res.render('profile', { user });
+    res.render('profile', { user, editMode });
 }
 
 function newChat(req, res, _next) {
@@ -377,61 +397,125 @@ function threadPage(req, res, _next) {
     res.render("thread", { thread, replies });
 }
 
+// async function editDescription(req, res, next) {
+//     try {
+//         // const { description } = req.body;
+//         // const user = await UserModel.getUserByToken(req.cookies.token);
+//         // const userID = user.id;
 
-async function changeDescription(req, res, _next) {
-    const userId = req.user.id;
-    const currentDescription = req.body.newDescription;
-    const descriptionElement = document.getElementById('user-description');
+//         // const conn = db.getConnection();
+//         // const query = 'UPDATE users SET description = ? WHERE id = ?';
+//         // await conn.query(query, [description, userID]);
+//         // // conn.release();
 
-    if (newDescription.length > 255) {
-        return res.status(400).send('Description exceeds maximum length');
+//         // res.redirect('/profile/editDescription');
+
+//     } catch (error) {
+//         next(error);
+//     }
+// }
+
+// async function editDescriptionPost(req, res, next) {
+//     try {
+//         const user = await UserModel.getUserByToken(req.cookies.token);
+//         const userID = user.id;
+
+//         const conn = db.getConnection();
+//         const query = 'SELECT description FROM users WHERE id = ?';
+//         const [rows] = await conn.query(query, [userID]);
+//         // conn.release();
+
+//         res.render('edit-description', { description: rows[0].description });
+//     } catch (error) {
+//         next(error);
+//     }
+// }
+
+// async function deleteDescription(req, res, next) {
+//     try {
+//         const user = await UserModel.getUserByToken(req.cookies.token);
+//         const userID = user.id;
+
+//         const conn = db.getConnection();
+//         const query = 'UPDATE users SET description = ? WHERE id = ?';
+//         await conn.query(query, [null, userID]);
+//         // conn.release();
+
+//         res.redirect('/profile');
+//     } catch (error) {
+//         next(error);
+//     }
+// }
+
+// async function uploadProfilePic(req, res, next) {
+//     try {
+//         const user = await UserModel.getUserByToken(req.cookies.token);
+//         const userID = user.id;
+
+//         const conn = db.getConnection();
+//         const query = 'UPDATE users SET profile_pic = ? WHERE id = ?';
+//         await conn.query(query, [req.file.filename, userID]);
+//         // conn.release();
+
+//         res.redirect('/profile');
+//     } catch (error) {
+//         next(error);
+//     }
+// }
+
+async function editProfilePage(req, res, _next) {
+    const isLoggedIn = !!req.cookies.token;
+
+    if (!isLoggedIn) {
+        // Handle the case where the user is not logged in
+        return res.status(401).send("Unauthorized");
     }
-
-    const newDescription = prompt('Enter the new description:');
-    if (newDescription === null) {
-        // User canceled the prompt
-        return;
-    }
-
     try {
-        const response = await fetch('/profile/description', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ description: newDescription }),
-        });
+        const userByToken = await UserModel.getUserByToken(req.cookies.token);
+        const userID = userByToken.id;
 
-        if (response.ok) {
-            // Update the description in the HTML
-            descriptionElement.textContent = newDescription;
-            alert('Description updated successfully.');
-        } else {
-            const errorData = await response.json();
-            alert(`Error updating description: ${errorData.message}`);
-        }
+        // Update the user object with the latest data
+        const user = await getUserById(userID);
+
+        res.locals = { title: 'Edit Profile', user };
+        res.render('edit-profile');
     } catch (error) {
-        console.error('Error updating description:', error);
-        alert('Error updating description. Please try again later.');
+        _next(error);
     }
 }
 
-async function deleteDescription(req, res, _next) {
-    const userId = req.user.id;
-
+async function updateProfile(req, res, next) {
     try {
+        console.log("updateProfile");
+        console.log(req.body);
+        const { name, username, email, description, profile_pic, delete_profile_pic } = req.body;
+        const user = await UserModel.getUserByToken(req.cookies.token);
+        const userID = user.id;
+
         const conn = db.getConnection();
-        const deleteQuery = 'UPDATE users SET description = NULL WHERE id = ?';
-        await conn.query(deleteQuery, [userId]);
+        let query;
+        let params;
 
-        // Update the user object in memory
-        const user = await getUserById(userId);
-        req.user = user;
+        if (delete_profile_pic) {
+            // Delete the profile picture
+            query = 'UPDATE users SET name = ?, username = ?, email = ?, profile_pic = NULL, description = ? WHERE id = ?';
+            params = [name || user.name, username || user.username, email || user.email, description || user.description, userID];
+        } else {
+            // Update the profile with the new data
+            query = 'UPDATE users SET name = ?, username = ?, email = ?, profile_pic = ?, description = ? WHERE id = ?';
+            params = [name || user.name, username || user.username, email || user.email, profile_pic || user.profile_pic, description || user.description, userID];
+        }
 
+        await conn.query(query, params);
+
+        // Get the updated user data
+        const updatedUser = await getUserById(userID);
+
+        // Pass the updated user data to the template
+        res.locals = { title: 'Edit Profile', user: updatedUser };
         res.redirect('/profile');
     } catch (error) {
-        console.error('Error deleting description:', error);
-        res.status(500).send('Error deleting description');
+        next(error);
     }
 }
 
@@ -448,7 +532,10 @@ export default {
     chatPage,
     threadPage,
     getLatestPosts,
-    deleteDescription,
-    changeDescription
+    // deleteDescription,
+    // editDescription,
+    // editDescriptionPost,
+    editProfilePage,
+    updateProfile
 
 }
