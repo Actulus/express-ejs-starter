@@ -1,0 +1,82 @@
+/* CSS for User Registration Page */
+.register {
+    width: 400px;
+    margin: 0 auto;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  label {
+    display: block;
+    font-weight: bold;
+  }
+  
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  button[type="submit"] {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .login-link {
+    text-align: center;
+  }
+  
+  .error {
+    color: red;
+  }
+  
+  /* Highlight input fields in red when error occurs */
+  .error input,
+  .error select {
+    border-color: red;
+  }
+  
+  /* Additional Fields styling */
+  #additionalFields {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+  }
+  
+  #additionalFields label {
+    font-weight: normal;
+  }
+  
+  #additionalFields select {
+    margin-top: 5px;
+  }
+  
+  /* Hide/show additional fields based on role */
+  #additionalFields,
+  #studentFields,
+  #teacherFields,
+  #employeeFields,
+  #administratorFields {
+    display: none;
+  }
+  
+  #additionalFields.show,
+  #studentFields.show,
+  #teacherFields.show,
+  #employeeFields.show,
+  #administratorFields.show {
+    display: block;
+  }
+  

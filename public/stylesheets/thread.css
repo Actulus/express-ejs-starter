@@ -1,0 +1,97 @@
+/* Reset default margins and paddings */
+body,
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+/* Set a background color for the body */
+body {
+  background-color: #f2f2f2;
+}
+
+/* Header styles */
+header {
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header-left img {
+  height: 40px;
+  width: 40px;
+  margin-right: 10px;
+}
+
+.header-right .profile-box {
+  display: flex;
+  align-items: center;
+}
+
+.profile-box .profile-name {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.profile-box img {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+}
+
+/* Thread container styles */
+.thread-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.thread-header h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.thread-details span {
+  margin-right: 10px;
+}
+
+/* Thread replies styles */
+.thread-replies .reply {
+  margin-top: 20px;
+}
+
+.reply-header {
+  margin-bottom: 10px;
+}
+
+.reply-details span {
+  margin-right: 10px;
+}
+
+.reply-content p {
+  margin-bottom: 10px;
+}
+
+/* Footer styles */
+footer {
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+
+footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
