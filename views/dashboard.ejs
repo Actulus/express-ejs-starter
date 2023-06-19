@@ -19,16 +19,18 @@
         </div>
       </div>
       <div class="header-right">
-        <img
-          alt="Add new post"
-          src="./images/new-post.jpg"
-          id="new-post"
-          onclick="newPost()"
-        />
+        <div class="new-post">
+          <img
+            alt="Add new post"
+            src="./images/new-post.svg"
+            id="new-post-img"
+            onclick="newPost()"
+          />
+        </div>
         <div class="profile-box">
           <a href="/profile">
             <div class="profile-name">User Name</div>
-            <img src="/profile-pic.jpg" alt="Profile Picture" />
+            <img src="../images/default_pfp.jpg" alt="Profile Picture" />
           </a>
         </div>
       </div>
@@ -44,13 +46,13 @@
       </div>
       <div class="middle-section">
         <h2>Dashboard</h2>
-        <!-- Render latest posts -->
-        <% latestPosts.forEach(function(post) { %>
+        <% if (searchResults !== '' ) { %> <%
+        searchResults.forEach(function(post) { %>
         <div class="post">
           <div class="post-header">
             <div class="writer-profile">
               <img
-                src="<%= post.writer_profile_pic %>"
+                src="<%= post.writer_profile_pic ? post.writer_profile_pic : '../images/default_pfp.jpg' %>"
                 alt="Writer Profile Picture"
                 id="writer-profile-pic"
               />
@@ -58,17 +60,47 @@
               <div class="post-date"><%= post.created_at %></div>
             </div>
             <a href="/post/<%= post.id %>">
-              <h3><%= post.title %></h3>
+              <h3 class="post-title"><%= post.title %></h3>
             </a>
           </div>
           <div class="post-content">
             <p><%= post.content %></p>
           </div>
         </div>
-        <% }); %>
+        <% }); %> <% } else if (noPosts) { %>
+        <p><%= noPosts %></p>
+        <% } else { %> <% latestPosts.forEach(function(post) { %>
+        <div class="post">
+          <div class="post-header">
+            <div class="writer-profile">
+              <img
+                src="<%= post.writer_profile_pic ? post.writer_profile_pic : '../images/default_pfp.jpg' %>"
+                alt="Writer Profile Picture"
+                id="writer-profile-pic"
+              />
+              <div class="writer-name"><%= post.writer_name %></div>
+              <div class="post-date"><%= post.created_at %></div>
+            </div>
+            <a href="/post/<%= post.id %>">
+              <h3 class="post-title"><%= post.title %></h3>
+            </a>
+          </div>
+          <div class="post-content">
+            <p><%= post.content %></p>
+          </div>
+        </div>
+        <% }); %> <% } %>
       </div>
       <div class="right-section">
-        <h2>Chats</h2>
+        <div id="chats-header">
+          <h2>Chats</h2>
+          <img
+            src="./images/new-chat.png"
+            alt="New Chat"
+            id="new-chat-img"
+            onclick="newChat()"
+          />
+        </div>
         <ul class="chat-list">
           <% userChats.forEach(function(chat) { %>
           <li><a href="/chat/<%= chat.id %>"><%= chat.name %></a></li>
