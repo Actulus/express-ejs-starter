@@ -29,8 +29,13 @@
         </div>
         <div class="profile-box">
           <a href="/profile">
-            <div class="profile-name">User Name</div>
-            <img src="../images/default_pfp.jpg" alt="Profile Picture" />
+            <div class="profile-name">
+              <%= user.name ? user.name : "User name" %>
+            </div>
+            <img
+              src="<%= user.profile_pic ? '/../images/' + user.profile_pic : '../images/default_pfp.jpg' %>"
+              alt="Profile Picture"
+            />
           </a>
         </div>
       </div>
@@ -109,7 +114,12 @@
       </div>
     </div>
     <footer>
-      <a href="/settings">Settings</a>
+      <form action="/settings" method="GET">
+        <button type="submit">Settings</button>
+      </form>
+      <form action="/auth/logout" method="GET">
+        <button type="submit">Logout</button>
+      </form>
     </footer>
   </body>
   <script>
