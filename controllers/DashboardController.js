@@ -41,6 +41,41 @@ async function getLatestPosts(_req, _res, _next) {
     return posts;
 }
 
+async function getAllPosts(_req, _res, _next) {
+    // Get a connection
+    const conn = db.getConnection();
+    const query = 'SELECT * FROM posts ORDER BY created_at DESC';
+    const [postResult, _columnDefinition] = await conn.query(query);
+
+    const usersQuery = 'SELECT * FROM users';
+    const [usersResult, _usersColumnDefinition] = await conn.query(usersQuery);
+
+    // get the writers based on the usersQuery and the postsQuery
+    const writerResult = usersResult.filter((user) => {
+        return postResult.some((post) => post.user_id === user.id);
+    });
+
+    const posts = postResult.map((post) => {
+        const writer = writerResult.find((user) => user.id === post.user_id);
+        let writer_profile_pic = writer ? writer.profile_pic : null;
+        const writer_name = writer ? writer.name : null;
+        const createdDate = new Date(post.created_at);
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+        const formattedDate = createdDate.toLocaleString('en-US', options);
+
+        return {
+            id: post.id,
+            title: post.title,
+            content: post.content,
+            created_at: formattedDate,
+            writer_profile_pic: writer_profile_pic,
+            writer_name: writer_name,
+        };
+    });
+
+    return posts;
+}
+
 async function getPostsContaining(keyword) {
     // Get a connection
     const conn = db.getConnection();
@@ -179,10 +214,15 @@ function newPostPage(req, res, _next) {
     res.render('new-post');
 }
 
-function postPage(req, res, _next) {
+async function postPage(req, res, _next) {
     const { id } = req.params;
-    const posts = getLatestPosts(); // Assuming getLatestPosts returns an array of posts
-    const post = posts.find((post) => post.id === id);
+    // console.log(`Post ID: ${id}`);
+    const posts = await getAllPosts(); // Assuming getLatestPosts returns an array of posts
+    // console.log(`Posts: %o`, posts);
+    const post = posts.find((post) => {
+        console.log(`Post ID: ${post.id}`);
+        return post.id === parseInt(id);
+    });
 
     if (!post) {
         // Handle the case where the post with the specified ID is not found
@@ -196,10 +236,24 @@ function postPage(req, res, _next) {
 
 
 
-function profilePage(req, res, _next) {
-    const user = { name: 'John Doe', username: 'Johnny', email: 'john.doe@gmail.com', profile_pic: 'https://www.w3schools.com/howto/img_avatar.png', description: '...', role: 'Diák', major: 'Programtervező informatikus', year: 'II' };
-    res.locals = { title: 'Profile', loggedIn: true, user: user };
-    res.render('profile');
+async function profilePage(req, res, _next) {
+    const { loggedIn } = req.body;
+
+    if (!loggedIn) {
+        // Handle the case where the user is not logged in
+        return res.status(401).send("Unauthorized");
+    }
+
+    const userId = loggedIn.id; // Assuming the user ID is available in the loggedIn object
+    const user = await getUserById(userId); // Assuming getUserById retrieves user data based on the ID
+
+    if (!user) {
+        // Handle the case where the user is not found
+        return res.status(404).send("User not found");
+    }
+
+    res.locals.title = 'Profile';
+    res.render('profile', { user });
 }
 
 function newChat(req, res, _next) {
