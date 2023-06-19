@@ -26,7 +26,12 @@ router.post('/new-post', DashboardController.newPost);
 // router.get('/post', DashboardController.postPage);
 router.get('/post/:id', DashboardController.postPage);
 
+// router.get('/profile/editDescription', DashboardController.editDescription);
+// router.post('/profile/editDescription', DashboardController.editDescriptionPost);
+// router.post('/profile/deleteDescription', DashboardController.deleteDescription);
 router.get('/profile', DashboardController.profilePage);
+router.get('/profile/edit', DashboardController.editProfilePage);
+router.post('/profile/update', DashboardController.updateProfile);
 
 router.get('/settings', (req, res) => {
     // Perform any necessary logout actions (e.g., clearing session data, destroying tokens, etc.)
