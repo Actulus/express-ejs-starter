@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Thread</title>
+    <link rel="stylesheet" href="../stylesheets/thread.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-left">
+        <img src="../images/logo.png" alt="University Logo" id="logo" />
+        <h1>University Name</h1>
+      </div>
+      <div class="header-right">
+        <div class="profile-box">
+          <a href="/profile">
+            <div class="profile-name">User Name</div>
+            <img src="../images/profile-pic.jpg" alt="Profile Picture" />
+          </a>
+        </div>
+      </div>
+    </header>
+    <div class="thread-container">
+      <div class="thread-header">
+        <h2>Thread Title</h2>
+        <div class="thread-details">
+          <span>Posted by Thread Author</span>
+          <span>Created at Thread Date</span>
+        </div>
+      </div>
+      <div class="thread-content">
+        <p>Thread content goes here.</p>
+      </div>
+      <div class="thread-replies">
+        <% replies.forEach(function(reply) { %>
+        <div class="reply">
+          <div class="reply-header">
+            <div class="reply-details">
+              <span>Posted by <%= reply.author %></span>
+              <span>Replied at <%= reply.createdAt %></span>
+            </div>
+          </div>
+          <div class="reply-content">
+            <p><%= reply.content %></p>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+    <footer>
+      <a href="/settings">Settings</a>
+    </footer>
+  </body>
+</html>
