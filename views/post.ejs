@@ -55,7 +55,15 @@
       </div>
     </div>
     <footer>
-      <a href="/settings">Settings</a>
+      <form action="/settings" method="GET">
+        <button type="submit">Settings</button>
+      </form>
+      <form action="/auth/logout" method="GET">
+        <button type="submit">Logout</button>
+      </form>
+      <form action="/dashboard" method="GET">
+        <button type="submit">Dashboard</button>
+      </form>
     </footer>
   </body>
 </html>
