@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chat</title>
+    <link rel="stylesheet" href="../stylesheets/chat.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-left">
+        <img src="../images/logo.png" alt="University Logo" id="logo" />
+        <h1>University Name</h1>
+      </div>
+      <div class="header-right">
+        <div class="profile-box">
+          <a href="/profile">
+            <div class="profile-name">User Name</div>
+            <img src="../images/profile-pic.jpg" alt="Profile Picture" />
+          </a>
+        </div>
+      </div>
+    </header>
+    <div class="chat-container">
+      <div class="chat-messages">
+        <!-- Render chat messages -->
+        <% messages.forEach(function(message) { %>
+        <div class="message">
+          <div class="message-sender"><%= message.sender %></div>
+          <div class="message-content"><%= message.content %></div>
+          <div class="message-timestamp"><%= message.timestamp %></div>
+        </div>
+        <% }); %>
+      </div>
+      <!-- <div class="chat-input">
+        <form action="/chat" method="POST">
+          <input type="text" name="message" placeholder="Type a message..." />
+          <button type="submit">Send</button>
+        </form>
+      </div> -->
+    </div>
+    <footer>
+      <a href="/settings">Settings</a>
+    </footer>
+  </body>
+</html>
