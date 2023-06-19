@@ -66,12 +66,12 @@ button {
   cursor: pointer;
 }
 
-.button-change {
+.edit-button {
   background-color: #2196f3;
   color: #fff;
 }
 
-.button-delete {
+.delete-button {
   background-color: #f44336;
   color: #fff;
 }
@@ -96,6 +96,7 @@ footer {
   background-color: #5ca861;
   padding: 10px;
   text-align: right;
+  display: inline-flex;
 }
 
 footer a {

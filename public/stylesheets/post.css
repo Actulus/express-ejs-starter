@@ -128,21 +128,34 @@ body {
     line-height: 1.5;
 }
 
-/* Footer styles */
 footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    margin-top: auto;
-    background-color: #5ca861;
-    padding: 10px;
-    text-align: right;
-  }
-  
-  footer a {
-    text-decoration: none;
-    color: #fff;
-    padding: 0 20px;
-  }
-  
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  margin-top: auto;
+  background-color: #5ca861;
+  padding: 10px;
+  text-align: right;
+  display: inline-flex;
+}
+
+footer a {
+  text-decoration: none;
+  color: #fff;
+  padding: 0 20px;
+}
+
+footer form button {
+  padding: 8px 20px;
+  margin: 0 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #0a3d6b;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  width: 100px;
+}
+
+/* Additional styling can be added based on your design preferences */
