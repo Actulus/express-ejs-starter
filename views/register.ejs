@@ -51,7 +51,7 @@
           <div id="studentFields">
             <div class="form-group">
               <label for="major">Major</label>
-              <select name="major" id="major">
+              <select name="major" id="major" onchange="populateDropDowns()">
                 <option value="">Select Major</option>
                 <% majors.forEach(function(major) { %>
                 <option value="<%= major%>"><%= major %></option>
@@ -128,29 +128,29 @@
 
       async function getMajors(role) {
         const conn = db.getConnection();
-        const query = "SELECT name FROM majors WHERE role = ?";
-        const [rows] = await conn.query(query, [role]);
+        const query = "SELECT name FROM majors";
+        const [rows] = await conn.query(query);
         const majors = rows.map((row) => row.name);
         return majors;
       }
 
       async function getYears(role) {
         const conn = db.getConnection();
-        const query = "SELECT name FROM years WHERE role = ?";
-        const [rows] = await conn.query(query, [role]);
+        const query = "SELECT name FROM years";
+        const [rows] = await conn.query(query);
         const years = rows.map((row) => row.name);
         return years;
       }
 
       async function getPositions(role) {
         const conn = db.getConnection();
-        const query = "SELECT name FROM positions WHERE role = ?";
-        const [rows] = await conn.query(query, [role]);
+        const query = "SELECT name FROM positions";
+        const [rows] = await conn.query(query);
         const positions = rows.map((row) => row.name);
         return positions;
       }
 
-      async function getDepartments() {
+      async function getDepartments(role) {
         const conn = db.getConnection();
         const query = "SELECT name FROM departments";
         const [rows] = await conn.query(query);
@@ -158,7 +158,7 @@
         return departments;
       }
 
-      async function getSections() {
+      async function getSections(role) {
         const conn = db.getConnection();
         const query = "SELECT name FROM sections";
         const [rows] = await conn.query(query);
