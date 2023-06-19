@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Forum</title>
+    <link rel="stylesheet" href="../stylesheets/forum.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-left">
+        <img src="../images/logo.png" alt="University Logo" id="logo" />
+        <h1>University Name</h1>
+      </div>
+      <div class="header-right">
+        <div class="profile-box">
+          <a href="/profile">
+            <div class="profile-name">User Name</div>
+            <img src="../images/default_pfp.jpg" alt="Profile Picture" />
+          </a>
+        </div>
+      </div>
+    </header>
+    <div class="forum-container">
+      <h2>Forum Name</h2>
+      <div class="forum-description">
+        <p>Forum description goes here.</p>
+      </div>
+      <div class="forum-threads">
+        <% threads.forEach(function(thread) { %>
+        <div class="thread">
+          <a href="/thread/<%= thread.id %>">
+            <h3><%= thread.title %></h3>
+          </a>
+          <div class="thread-details">
+            <span
+              >Posted by <%= thread.author %> on <%= thread.createdAt %></span
+            >
+            <span>Replies: <%= thread.replyCount %></span>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+    <footer>
+      <a href="/settings">Settings</a>
+    </footer>
+  </body>
+</html>
